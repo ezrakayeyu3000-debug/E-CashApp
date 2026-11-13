@@ -24,12 +24,13 @@ public class DatabaseHelper {
 
     // This method creates the tables if they don't exist yet
     public static void initializeDatabase() {
-        // UPGRADE 1: Added "pin TEXT" to the users table
+        // UPGRADE 1: Added "is_admin INTEGER DEFAULT 0" to the users table
         String createUsersTable = "CREATE TABLE IF NOT EXISTS users (" +
                 "username TEXT PRIMARY KEY, " +
                 "pin TEXT NOT NULL, " +
                 "balance REAL, " +
-                "account_type TEXT" +
+                "account_type TEXT, " +
+                "is_admin INTEGER DEFAULT 0" + 
                 ");";
 
         String createTransactionsTable = "CREATE TABLE IF NOT EXISTS transactions (" +
@@ -50,6 +51,12 @@ public class DatabaseHelper {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(createUsersTable);
             stmt.execute(createTransactionsTable);
+            
+            // UPGRADE 3: Automatically create a default admin account if it doesn't exist
+            String createDefaultAdmin = "INSERT OR IGNORE INTO users (username, pin, balance, account_type, is_admin) " +
+                                        "VALUES ('admin', '1234', 10000.0, 'Savings', 1);";
+            stmt.execute(createDefaultAdmin);
+            
         } catch (SQLException e) {
             System.out.println("Error creating tables: " + e.getMessage());
         } finally {

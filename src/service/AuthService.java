@@ -43,7 +43,12 @@ public class AuthService {
             if (rs.next()) {
                 double balance = rs.getDouble("balance");
                 String accType = rs.getString("account_type");
-                currentUser = new User(username, pin, balance, accType); 
+                
+                // NEW: Check if the user is an admin (1 = true, 0 = false)
+                boolean isAdmin = rs.getInt("is_admin") == 1;
+                
+                // UPDATED: Pass isAdmin to the User constructor
+                currentUser = new User(username, pin, balance, accType, isAdmin); 
                 return true;
             }
         } catch (SQLException e) {
@@ -103,7 +108,11 @@ public class AuthService {
                 String accType = rs.getString("account_type");
                 String pin = rs.getString("pin");
                 
-                return new User(username, pin, balance, accType);
+                // NEW: Check if this user is an admin
+                boolean isAdmin = rs.getInt("is_admin") == 1;
+                
+                // UPDATED: Pass isAdmin to the User constructor
+                return new User(username, pin, balance, accType, isAdmin);
             }
         } catch (SQLException e) {
             System.out.println("Error finding user: " + e.getMessage());

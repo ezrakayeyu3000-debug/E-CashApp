@@ -8,12 +8,15 @@ public class User {
     private String pin;
     private Account account;
     private List<Transaction> transactionHistory;
+    private boolean isAdmin; // NEW: To track if the user is an admin
 
-    public User(String username, String pin, double balance, String accountType) {
+    // UPDATED: Added boolean isAdmin to the constructor
+    public User(String username, String pin, double balance, String accountType, boolean isAdmin) {
         this.username = username;
         this.pin = pin;
-        this.account = new Account(balance); // Creates the account with the DB balance
+        this.account = new Account(balance); 
         this.transactionHistory = new ArrayList<>();
+        this.isAdmin = isAdmin; 
     }
 
     public String getUsername() { return username; }
@@ -21,11 +24,15 @@ public class User {
     public Account getAccount() { return account; }
     public List<Transaction> getTransactionHistory() { return transactionHistory; }
     
+    // NEW: Getter to check if the user is an admin
+    public boolean isAdmin() { 
+        return isAdmin; 
+    }
+    
     public void addTransaction(Transaction t) {
         this.transactionHistory.add(t);
     }
 
-    // --- NEW METHOD ---
     public void setPin(String pin) {
         this.pin = pin;
     }

@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.util.List;
 import service.AuthService;
+import service.AdminService; // NEW IMPORT
 import model.User;
 import model.Transaction;
 import util.DatabaseHelper;
@@ -46,7 +47,16 @@ public class Main {
 
                 if (authService.login(user, pin)) {
                     System.out.println("Login successful!");
-                    showDashboard(scanner, authService); 
+                    
+                    // NEW: CHECK IF USER IS ADMIN
+                    if (authService.getCurrentUser().isAdmin()) {
+                        AdminService adminService = new AdminService();
+                        // UPDATED: Pass the admin's username to the dashboard
+                        adminService.adminDashboard(scanner, authService.getCurrentUser().getUsername()); 
+                    } else {
+                        showDashboard(scanner, authService); // Opens Normal Dashboard
+                    }
+                    
                 } else {
                     System.out.println("Invalid username or PIN.");
                 }
@@ -71,8 +81,8 @@ public class Main {
             System.out.println("2. Cash-In (Deposit)");
             System.out.println("3. Transfer");
             System.out.println("4. View Transaction History");
-            System.out.println("5. Change PIN"); // NEW OPTION
-            System.out.println("6. Logout");     // SHIFTED DOWN
+            System.out.println("5. Change PIN"); 
+            System.out.println("6. Logout");     
             System.out.print("Choose an option: ");
             
             String dashChoice = scanner.nextLine();
@@ -159,7 +169,6 @@ public class Main {
                     break;
                     
                 case "5":
-                    // NEW: CHANGE PIN LOGIC
                     System.out.print("Enter current PIN: ");
                     String oldPin = scanner.nextLine();
                     
@@ -172,7 +181,7 @@ public class Main {
                     String newPin = scanner.nextLine();
                     
                     if (authService.updatePinInDB(user.getUsername(), newPin)) {
-                        user.setPin(newPin); // Updates the current session
+                        user.setPin(newPin); 
                         System.out.println("PIN changed successfully!");
                     } else {
                         System.out.println("Failed to change PIN.");
