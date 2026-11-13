@@ -5,24 +5,28 @@ import java.util.List;
 
 public class User {
     private String username;
-    private Account account; 
-    private List<Transaction> transactionHistory; // NEW: The log list
+    private String pin;
+    private Account account;
+    private List<Transaction> transactionHistory;
 
-    public User(String username, Account account) {
+    public User(String username, String pin, double balance, String accountType) {
         this.username = username;
-        this.account = account;
-        this.transactionHistory = new ArrayList<>(); // Initialize the list
+        this.pin = pin;
+        this.account = new Account(balance); // Creates the account with the DB balance
+        this.transactionHistory = new ArrayList<>();
     }
 
     public String getUsername() { return username; }
+    public String getPin() { return pin; }
     public Account getAccount() { return account; }
+    public List<Transaction> getTransactionHistory() { return transactionHistory; }
     
-    // NEW: Methods to handle logs
     public void addTransaction(Transaction t) {
-        transactionHistory.add(t);
+        this.transactionHistory.add(t);
     }
 
-    public List<Transaction> getTransactionHistory() {
-        return transactionHistory;
+    // --- NEW METHOD ---
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 }
